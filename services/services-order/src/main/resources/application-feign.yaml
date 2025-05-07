@@ -12,3 +12,11 @@ spring:
             logger-level: full
             connect-timeout: 3000
             read-timeout: 5000
+
+#            request-interceptors: # 这种写法拦截器仅仅会对service-product的客户端有效
+#              - com.example.order.interceptor.XTokenRequestInterceptor
+
+# 启用sentinel，feignClient的熔断也依赖sentinel
+feign:
+  sentinel:
+    enabled: true

@@ -36,3 +36,35 @@ Nacos配置中心该服务-{profile}配置（通过spring.cloud.nacos.config.pre
 
 
 > 因此，配置生效覆盖关系： 对于key名相同，后加载会覆盖掉前加载，故而最终为后加载的配置项生效！ 对于key名不同，则直接生效（会加载，但不会被覆盖）；
+
+
+# OpenFeign
+
+## 启动注解
+
+@EnableFeignClients @FeignClient
+
+## 超时时间设置
+> 1.spring配置，见application-feign.yaml（但是此种方式不支持动态变更，每次变化还需要更改代码）
+
+
+
+## 重试机制
+ 
+> 默认是首次重试间隔100ms，然后下次间隔100*1.5ms，当达到最大1s间隔时，每间隔1s重试一次，最大重试5次
+> @Bean
+> public Retryer retryer() {
+>        return new Retryer.Default();// feign请求重试机制
+> }
+
+## 请求拦截器
+
+> 1、如果只想对某个服务添加拦截器，那么可以在application-feign.yaml在指定的客户端上配置request-interceptor
+> 
+> 2、如果想所有的客户端都生效，那么可以用@Component标注在拦截器上，将拦截器bean交给ios管理即可，见com.example.order.interceptor.XTokenRequestInterceptor
+
+
+## Fallback：兜底返回(熔断)
+> 1. 创建xxxFeignClient的实现类xxxFeignClientFallBack，并对方法进行实现
+> 2. 在xxxFeignClient的@FeignClient(fallback=xxxFeignClientFallBack.class)
+> 3. application-feign.yaml配置文件中启用sentinel
